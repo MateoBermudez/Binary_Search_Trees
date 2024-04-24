@@ -95,4 +95,17 @@ public class Arbol {
             ImprimirPadres(R.getLD());
         }
     }
+
+    public boolean BuscarDato(Nodo R, char dato) {
+        boolean foundRigth = false;
+        boolean foundLeft = false;
+        if (R != null) {
+            if (R.getDato() == dato) {
+                return true;
+            }
+            foundLeft = BuscarDato(R.getLI(), dato);
+            foundRigth = BuscarDato(R.getLD(), dato);
+        }
+        return foundLeft || foundRigth;
+    }
 }

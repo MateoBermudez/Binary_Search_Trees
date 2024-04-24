@@ -4,6 +4,8 @@ public class Main {
     public static Scanner lea = new Scanner(System.in);
     public static void main(String[] args) {
         String ingresoArbol;
+        char datoBus;
+        boolean datoEncontrado;
         char[] arbolChar;
         Arbol arbol;
         System.out.println("Ingrese los datos (Char) del arbol.");
@@ -26,7 +28,16 @@ public class Main {
         arbol.ImprimirHojas(arbol.Raiz);
         System.out.print("\nImpresion de los padres del arbol\n");
         arbol.ImprimirPadres(arbol.Raiz);
-        System.out.print("\n");
+        System.out.print("\nIngrese el dato a buscar: ");
+        datoBus = lea.next().charAt(0);
+        datoBus = Character.toUpperCase(datoBus);
+        datoEncontrado = arbol.BuscarDato(arbol.Raiz, datoBus);
+        if (datoEncontrado) {
+            System.out.println("Dato encontrado");
+        }
+        else {
+            System.out.println("Dato no encontrado");
+        }
     }
 
 
