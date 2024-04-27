@@ -57,7 +57,7 @@ public class Main {
                     if (datoExiste) {
                         System.out.println("No se puede insertar, el dato ya existe");
                     } else {
-                        //Insertar el dato
+                        arbol.InsertarDato(arbol.Raiz, datoAux);
                     }
                     break;
                 case 7:
@@ -66,7 +66,8 @@ public class Main {
                     datoAux = Character.toUpperCase(datoAux);
                     datoExiste = arbol.BuscarDato(arbol.Raiz, datoAux);
                     if (datoExiste) {
-                        //Eliminar el dato
+                        //Falta
+                        //Eliminar dato
                     } else {
                         System.out.println("Dato no existe, no se puede eliminar");
                     }
@@ -77,7 +78,7 @@ public class Main {
                     datoAux = Character.toUpperCase(datoAux);
                     datoExiste = arbol.BuscarDato(arbol.Raiz, datoAux);
                     if (datoExiste) {
-                        //Buscar el hermano
+                        arbol.MostrarHermano(arbol.Raiz, datoAux);
                     } else {
                         System.out.println("Dato no existe, no se puede buscar su hermano");
                     }
@@ -88,7 +89,8 @@ public class Main {
                     datoAux = Character.toUpperCase(datoAux);
                     datoExiste = arbol.BuscarDato(arbol.Raiz, datoAux);
                     if (datoExiste) {
-                        //Buscar el nivel
+                        //Nivel 1 --> El nivel de la raiz es 1
+                        arbol.MostrarNivel(arbol.Raiz, datoAux, 1);
                     } else {
                         System.out.println("Dato no existe, no se puede buscar su nivel");
                     }
@@ -99,7 +101,7 @@ public class Main {
                     datoAux = Character.toUpperCase(datoAux);
                     datoExiste = arbol.BuscarDato(arbol.Raiz, datoAux);
                     if (datoExiste) {
-                        //Buscar la altura
+                        arbol.MostrarAltura(arbol.Raiz, datoAux);
                     } else {
                         System.out.println("Dato no existe, no se puede buscar su altura");
                     }
@@ -110,24 +112,26 @@ public class Main {
                     datoAux = Character.toUpperCase(datoAux);
                     datoExiste = arbol.BuscarDato(arbol.Raiz, datoAux);
                     if (datoExiste) {
+                        //Falta
                         //Buscar los primos hermanos
                     } else {
                         System.out.println("Dato no existe, no se puede buscar sus primos hermanos");
                     }
                     break;
                 case 12:
-                    System.out.print("\nIngrese el dato para buscar sus ancestros: ");
+                    System.out.print("\nIngrese el dato para buscar sus ancestros: \n");
                     datoAux = lea.next().charAt(0);
                     datoAux = Character.toUpperCase(datoAux);
                     datoExiste = arbol.BuscarDato(arbol.Raiz, datoAux);
                     if (datoExiste) {
-                        //Buscar los ancestros
+                        arbol.MostrarAncentros(arbol.Raiz, datoAux);
                     } else {
                         System.out.println("Dato no existe, no se puede buscar sus ancestros");
                     }
                     break;
                 case 13:
                     System.out.println("Reemplazando el creado del arbol anterior y balanceandolo de la forma AVL con la cadena de datos ingresada previamente");
+                    //Falta
                     //Crear arbol AVL (Llamar metodo)
                     break;
                 case 14:
@@ -172,7 +176,7 @@ public class Main {
     }
 
     private static void Menu() {
-        System.out.println("1. Crear el Arbol");
+        System.out.println("\n1. Crear el Arbol");
         System.out.println("2. Los 3 recorridos del arbol");
         System.out.println("3. Mostrar el arbol graficamente");
         System.out.println("4. Mostrar las hojas del arbol");
@@ -185,7 +189,7 @@ public class Main {
         System.out.println("11. Mostrar los primos hermanos de un dato");
         System.out.println("12. Mostrar los ancestros de un dato");
         System.out.println("13. Crear el arbol y balancearlo de la forma AVL con la cadena de datos ingresada previamente");
-        System.out.println("14. Salir");
+        System.out.println("14. Salir\n");
     }
 
 }

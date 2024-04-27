@@ -108,4 +108,81 @@ public class Arbol {
         }
         return foundLeft || foundRigth;
     }
+
+    public void InsertarDato(Nodo R, char dato) {
+        Nodo nuevo = new Nodo(dato);
+        //El siguiente es el insertar del arbol, ya que recibe dos nodos (Sobrecarga/Polimorfismo), no como este que recibe un nodo y un char
+        InsertarDato(R, nuevo);
+    }
+
+    public void MostrarHermano(Nodo R, char dato) {
+        if (R != null && R == Raiz && R.getDato() == dato) {
+            System.out.println("El dato es la raiz, no tiene hermano");
+            return;
+        }
+        if (R != null) {
+            if (R.TieneLigaIzquierda() && R.getLI().getDato() == dato) {
+                System.out.println((R.TieneLigaDerecha() ? "El hermano de " + dato + " es: " + R.getLD().getDato() : "No tiene hermano"));
+            }
+            else if (R.TieneLigaDerecha() && R.getLD().getDato() == dato) {
+                System.out.println((R.TieneLigaIzquierda() ? "El hermano de " + dato + " es: " + R.getLI().getDato() : "No tiene hermano"));
+            }
+            else {
+                MostrarHermano(R.getLI(), dato);
+                MostrarHermano(R.getLD(), dato);
+            }
+        }
+    }
+
+    public void MostrarNivel(Nodo R, char dato, int nivel) {
+        if (R != null) {
+            if (R.getDato() == dato) {
+                System.out.println("Nivel del dato: " + R.getDato() + " es: " + nivel);
+            }
+            else {
+                MostrarNivel(R.getLI(), dato, nivel + 1);
+                MostrarNivel(R.getLD(), dato, nivel + 1);
+            }
+        }
+    }
+
+    public boolean MostrarAncentros(Nodo R, char dato) {
+        if (R != null) {
+            if (R.getDato() == dato) {
+                return true;
+            }
+            if (MostrarAncentros(R.getLI(), dato) || MostrarAncentros(R.getLD(), dato)) {
+                System.out.print(R.getDato() + " ");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void MostrarAltura(Nodo R, char dato) {
+        int Altura;
+        if (R != null) {
+            if (R.getDato() == dato) {
+                //Calcula la altura del nodo con el dato especifico
+                Altura = CalcularAlturaNodo(R);
+                System.out.println("La altura del dato es: " + Altura);
+            }
+            else {
+                //Busca el dato
+                MostrarAltura(R.getLI(), dato);
+                MostrarAltura(R.getLD(), dato);
+            }
+        }
+    }
+
+    private int CalcularAlturaNodo(Nodo R) {
+        int altIzq, altDer;
+        if (R != null) {
+            altIzq = CalcularAlturaNodo(R.getLI());
+            altDer = CalcularAlturaNodo(R.getLD());
+            return Math.max(altIzq, altDer) + 1;
+        }
+        return 0;
+    }
+
 }
