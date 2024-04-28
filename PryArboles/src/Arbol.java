@@ -79,7 +79,7 @@ public class Arbol {
     public void ImprimirHojas(Nodo R) {
         if (R != null) {
             ImprimirHojas(R.getLI());
-            if (!R.TieneLigaIzquierda() && !R.TieneLigaDerecha()) {
+            if (R.EsHoja()) {
                 System.out.print(R.getDato());
             }
             ImprimirHojas(R.getLD());
@@ -89,7 +89,7 @@ public class Arbol {
     public void ImprimirPadres(Nodo R) {
         if (R != null) {
             ImprimirPadres(R.getLI());
-            if (R.TieneLigaIzquierda() || R.TieneLigaDerecha()) {
+            if (!R.EsHoja()) {
                 System.out.print(R.getDato());
             }
             ImprimirPadres(R.getLD());
@@ -134,18 +134,6 @@ public class Arbol {
         }
     }
 
-    public void MostrarNivel(Nodo R, char dato, int nivel) {
-        if (R != null) {
-            if (R.getDato() == dato) {
-                System.out.println("Nivel del dato: " + R.getDato() + " es: " + nivel);
-            }
-            else {
-                MostrarNivel(R.getLI(), dato, nivel + 1);
-                MostrarNivel(R.getLD(), dato, nivel + 1);
-            }
-        }
-    }
-
     public boolean MostrarAncentros(Nodo R, char dato) {
         if (R != null) {
             if (R.getDato() == dato) {
@@ -185,4 +173,143 @@ public class Arbol {
         return 0;
     }
 
+    public void MostrarPrimosHermanos(char dato) {
+            if (Raiz.getDato() == dato) {
+                System.out.println("El dato es la raiz, no tiene primos hermanos");
+            }
+            else {
+                int NivelPrimosHermanos = CalcularNivel(Raiz, dato, 1);
+                MostrarDatosPorNivel(Raiz, dato, NivelPrimosHermanos);
+            }
+    }
+
+    private void MostrarDatosPorNivel(Nodo R, char dato, int nivelSolicitado) {
+        if (R != null) {
+            int NivelNodo = CalcularNivel(Raiz, R.getDato(), 1);
+            //Verifica si son hermanos los que siguen del nodo actual, y si alguno de estos contiene al dato buscado
+            if (!((R.TieneLigaIzquierda() && R.getLI().getDato() == dato) || (R.TieneLigaDerecha() && R.getLD().getDato() == dato))) {
+                //Verifica si estan al mismo nivel
+                if (NivelNodo == nivelSolicitado) {
+                    System.out.print(R.getDato() + " ");
+                }
+                //Sigue buscando el dato
+                else {
+                    MostrarDatosPorNivel(R.getLI(), dato, nivelSolicitado);
+                    MostrarDatosPorNivel(R.getLD(), dato, nivelSolicitado);
+                }
+            }
+        }
+    }
+
+    public int CalcularNivel(Nodo R, char dato, int nivel) {
+        if (R != null) {
+            if (R.getDato() == dato) {
+                return nivel;
+            }
+            else {
+                if (R.TieneLigaIzquierda() && BuscarDato(R.getLI(), dato)) {
+                    nivel = CalcularNivel(R.getLI(), dato, nivel + 1);
+                }
+                else if (R.TieneLigaDerecha() && BuscarDato(R.getLD(), dato)) {
+                    nivel = CalcularNivel(R.getLD(), dato, nivel + 1);
+                }
+            }
+        }
+        return nivel;
+    }
+
+    public void EliminarDato(Nodo R, char dato) {
+        if (Raiz.getDato() == dato) {
+            if (Raiz.TieneLigaIzquierda()) {
+                EncontrarSucesorIzquierda(Raiz.getLI(), Raiz);
+            }
+            else if (!Raiz.TieneLigaIzquierda() && Raiz.TieneLigaDerecha()) {
+                EncontrarSucesorDerecha(Raiz.getLD(), Raiz);
+            }
+            else {
+                Raiz = null;
+            }
+        }
+        else if (R != null) {
+            //sigIzq o sigDer es el nodo a eliminar, por eso se busca el sucesor de este
+            Nodo sigIzq = R.getLI(), sigDer = R.getLD();
+            if ((sigIzq != null && sigIzq.getDato() == dato)) {
+                if (sigIzq.EsHoja()) {
+                    R.setLI(null);
+                }
+                else if(sigIzq.TieneLigaIzquierda() && !sigIzq.TieneLigaDerecha()) {
+                    R.setLI(sigIzq.getLI());
+                }
+                else if (!sigIzq.TieneLigaIzquierda() && sigIzq.TieneLigaDerecha()) {
+                    R.setLI(sigIzq.getLD());
+                }
+                else {
+                    if (!sigIzq.TieneLigaIzquierda()) {
+                        //Se busca sucesor por la derecha de este nodo (Aquel que contiene al dato a eliminar)
+                        EncontrarSucesorDerecha(sigIzq.getLD(), sigIzq);
+                    } else {
+                        //Se busca sucesor por la izquierda de este nodo (Aquel que contiene al dato a eliminar)
+                        EncontrarSucesorIzquierda(sigIzq.getLI(), sigIzq);
+                    }
+                }
+            }
+            else if (sigDer != null && sigDer.getDato() == dato) {
+                if (sigDer.EsHoja()) {
+                    R.setLD(null);
+                }
+                else if(sigDer.TieneLigaIzquierda() && !sigDer.TieneLigaDerecha()) {
+                    R.setLD(sigDer.getLI());
+                }
+                else if(!sigDer.TieneLigaIzquierda() && sigDer.TieneLigaDerecha()) {
+                    R.setLD(sigDer.getLD());
+                }
+                else {
+                    if (!sigDer.TieneLigaIzquierda()) {
+                        //Se busca sucesor por la derecha de este nodo (Aquel que contiene al dato a eliminar)
+                        EncontrarSucesorDerecha(sigDer.getLD(), sigDer);
+                    } else {
+                        //Se busca sucesor por la izquierda de este nodo (Aquel que contiene al dato a eliminar)
+                        EncontrarSucesorIzquierda(sigDer.getLI(), sigDer);
+                    }
+                }
+            }
+            //Se sigue buscando el dato
+            else {
+                EliminarDato(R.getLI(), dato);
+                EliminarDato(R.getLD(), dato);
+            }
+        }
+    }
+
+    public void EncontrarSucesorIzquierda(Nodo R, Nodo Padre) {
+        //Dato auxiliar
+        char dato;
+        if (R != null) {
+            if (R.TieneLigaDerecha()) {
+                EncontrarSucesorIzquierda(R.getLD(), Padre);
+            }
+            else {
+                //Se elimina y se busca el nuevo sucesor
+                dato = R.getDato();
+                EliminarDato(Padre, dato);
+                Padre.setDato(dato);
+            }
+        }
+    }
+
+    public void EncontrarSucesorDerecha(Nodo R, Nodo Padre) {
+        //Dato auxiliar
+        char dato;
+        if (R != null) {
+            if (R.TieneLigaIzquierda()) {
+                EncontrarSucesorIzquierda(R.getLI(), Padre);
+            }
+            else {
+                //Se elimina y se busca el nuevo sucesor
+                dato = R.getDato();
+                EliminarDato(Padre, dato);
+                Padre.setDato(dato);
+            }
+        }
+    }
 }

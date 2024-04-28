@@ -3,33 +3,30 @@ import java.util.Scanner;
 public class Main {
     public static Scanner lea = new Scanner(System.in);
     public static void main(String[] args) {
-        boolean salir = false, datoExiste;
-        int opcion;
+        boolean salir = false, datoExiste, arbolCreado = false;
         char datoAux;
         char[] arbolChar;
-        String ingresoArbol;
-        Arbol arbol = null;
+        String ingresoArbol, ingresoOpcion;
+        Arbol arbol = new Arbol();
         while (!salir) {
             Menu();
             System.out.println("Ingrese la opcion que desea realizar (1-14): ");
-            opcion = lea.nextInt();
-            while (opcion != 1 && arbol == null) {
-                System.out.println("Primero debe crear el arbol (Opcion 1)");
-                System.out.println("Ingrese la opcion que desea realizar (1-14): ");
-                opcion = lea.nextInt();
-            }
-            switch (opcion) {
-                case 1:
+            ingresoOpcion = lea.next();
+            ingresoOpcion = ValidarArbolExiste(arbolCreado, ingresoOpcion);
+            switch (ingresoOpcion) {
+                case "1":
                     System.out.println("Ingrese los datos (Char) del arbol.");
                     ingresoArbol = lea.next();
+                    ingresoArbol = ReIngresarArbol(ingresoArbol);
                     ingresoArbol = ingresoArbol.trim();
                     ingresoArbol = ingresoArbol.toUpperCase();
                     arbolChar = ingresoArbol.toCharArray();
                     arbolChar = EliminarDatosRepetidos(arbolChar);
                     arbol = new Arbol();
                     arbol.CrearArbol(arbolChar);
+                    arbolCreado = true;
                     break;
-                case 2:
+                case "2":
                     System.out.print("\nPreOrden\n");
                     arbol.PreOrden(arbol.Raiz);
                     System.out.print("\nPosOrden\n");
@@ -37,21 +34,22 @@ public class Main {
                     System.out.print("\nInOrden\n");
                     arbol.InOrden(arbol.Raiz);
                     break;
-                case 3:
+                case "3":
                     System.out.print("\nImpresion Grafica del Arbol (Hijo Izquierdo: |--, Hijo Derecho: └-- \n");
                     arbol.ImpresionGrafica(arbol.Raiz, "", true);
                     break;
-                case 4:
+                case "4":
                     System.out.print("\nImpresion de las hojas del arbol\n");
                     arbol.ImprimirHojas(arbol.Raiz);
                     break;
-                case 5:
+                case "5":
                     System.out.print("\nImpresion de los padres del arbol\n");
                     arbol.ImprimirPadres(arbol.Raiz);
                     break;
-                case 6:
+                case "6":
                     System.out.print("\nIngrese el dato a insertar: ");
                     datoAux = lea.next().charAt(0);
+                    datoAux = ReIngresarInsertarDato(datoAux);
                     datoAux = Character.toUpperCase(datoAux);
                     datoExiste = arbol.BuscarDato(arbol.Raiz, datoAux);
                     if (datoExiste) {
@@ -60,21 +58,24 @@ public class Main {
                         arbol.InsertarDato(arbol.Raiz, datoAux);
                     }
                     break;
-                case 7:
+                case "7":
                     System.out.print("\nIngrese el dato a Eliminar: ");
                     datoAux = lea.next().charAt(0);
+                    datoAux = ReIngresarInsertarDato(datoAux);
                     datoAux = Character.toUpperCase(datoAux);
                     datoExiste = arbol.BuscarDato(arbol.Raiz, datoAux);
                     if (datoExiste) {
-                        //Falta
-                        //Eliminar dato
+                        //It looks correct -> Test it
+                        arbol.EliminarDato(arbol.Raiz, datoAux);
+                        arbolCreado = arbol.Raiz != null;
                     } else {
                         System.out.println("Dato no existe, no se puede eliminar");
                     }
                     break;
-                case 8:
+                case "8":
                     System.out.print("\nIngrese el dato para buscar su hermano: ");
                     datoAux = lea.next().charAt(0);
+                    datoAux = ReIngresarInsertarDato(datoAux);
                     datoAux = Character.toUpperCase(datoAux);
                     datoExiste = arbol.BuscarDato(arbol.Raiz, datoAux);
                     if (datoExiste) {
@@ -83,21 +84,23 @@ public class Main {
                         System.out.println("Dato no existe, no se puede buscar su hermano");
                     }
                     break;
-                case 9:
+                case "9":
                     System.out.print("\nIngrese el dato para buscar su nivel: ");
                     datoAux = lea.next().charAt(0);
+                    datoAux = ReIngresarInsertarDato(datoAux);
                     datoAux = Character.toUpperCase(datoAux);
                     datoExiste = arbol.BuscarDato(arbol.Raiz, datoAux);
                     if (datoExiste) {
                         //Nivel 1 --> El nivel de la raiz es 1
-                        arbol.MostrarNivel(arbol.Raiz, datoAux, 1);
+                        System.out.println("Nivel del dato: " + arbol.CalcularNivel(arbol.Raiz, datoAux, 1));
                     } else {
                         System.out.println("Dato no existe, no se puede buscar su nivel");
                     }
                     break;
-                case 10:
+                case "10":
                     System.out.print("\nIngrese el dato para buscar su altura: ");
                     datoAux = lea.next().charAt(0);
+                    datoAux = ReIngresarInsertarDato(datoAux);
                     datoAux = Character.toUpperCase(datoAux);
                     datoExiste = arbol.BuscarDato(arbol.Raiz, datoAux);
                     if (datoExiste) {
@@ -106,21 +109,23 @@ public class Main {
                         System.out.println("Dato no existe, no se puede buscar su altura");
                     }
                     break;
-                case 11:
+                case "11":
                     System.out.print("\nIngrese el dato para buscar sus primos hermanos: ");
                     datoAux = lea.next().charAt(0);
+                    datoAux = ReIngresarInsertarDato(datoAux);
                     datoAux = Character.toUpperCase(datoAux);
                     datoExiste = arbol.BuscarDato(arbol.Raiz, datoAux);
                     if (datoExiste) {
-                        //Falta
-                        //Buscar los primos hermanos
+                        System.out.println("Si no se imprime nada, el dato no tiene primos hermanos. ");
+                        arbol.MostrarPrimosHermanos(datoAux);
                     } else {
                         System.out.println("Dato no existe, no se puede buscar sus primos hermanos");
                     }
                     break;
-                case 12:
+                case "12":
                     System.out.print("\nIngrese el dato para buscar sus ancestros: \n");
                     datoAux = lea.next().charAt(0);
+                    datoAux = ReIngresarInsertarDato(datoAux);
                     datoAux = Character.toUpperCase(datoAux);
                     datoExiste = arbol.BuscarDato(arbol.Raiz, datoAux);
                     if (datoExiste) {
@@ -129,12 +134,12 @@ public class Main {
                         System.out.println("Dato no existe, no se puede buscar sus ancestros");
                     }
                     break;
-                case 13:
+                case "13":
                     System.out.println("Reemplazando el creado del arbol anterior y balanceandolo de la forma AVL con la cadena de datos ingresada previamente");
                     //Falta
                     //Crear arbol AVL (Llamar metodo)
                     break;
-                case 14:
+                case "14":
                     salir = true;
                     break;
                 default:
@@ -192,4 +197,37 @@ public class Main {
         System.out.println("14. Salir\n");
     }
 
+    private static boolean ValidarInputArbol(String input) {
+        return input.matches("[a-zA-Z]{1,26}");
+    }
+
+    private static String ReIngresarArbol(String ingresoArbol) {
+        //Si no valida correctamente entra al while
+        while (!ValidarInputArbol(ingresoArbol)) {
+            System.out.println("Ingrese una cadena de caracteres correcta, el arbol se manejara en caracteres del alfabeto ingles.");
+            ingresoArbol = lea.next();
+        }
+        return ingresoArbol;
+    }
+
+    private static boolean ValidarInsertarDato(char InsertarDato) {
+        String InsertarAux = String.valueOf(InsertarDato);
+        return InsertarAux.matches("[a-zA-Z]");
+    }
+
+    private static char ReIngresarInsertarDato(char InsertarDato) {
+        while (!ValidarInsertarDato(InsertarDato)) {
+            System.out.println("Ingrese un caracter correcto. ");
+            InsertarDato = lea.next().charAt(0);
+        }
+        return InsertarDato;
+    }
+
+    private static String ValidarArbolExiste(boolean arbolCreado, String ingresoOpcion) {
+        while (!arbolCreado && !ingresoOpcion.equals("1")) {
+            System.out.println("Primero debe crear el arbol (Opcion 1)");
+            ingresoOpcion = lea.next();
+        }
+        return ingresoOpcion;
+    }
 }
