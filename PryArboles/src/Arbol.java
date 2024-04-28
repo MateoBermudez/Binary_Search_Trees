@@ -79,7 +79,7 @@ public class Arbol {
     public void ImprimirHojas(Nodo R) {
         if (R != null) {
             ImprimirHojas(R.getLI());
-            if (!R.TieneLigaIzquierda() && !R.TieneLigaDerecha()) {
+            if (R.EsHoja()) {
                 System.out.print(R.getDato());
             }
             ImprimirHojas(R.getLD());
@@ -89,7 +89,7 @@ public class Arbol {
     public void ImprimirPadres(Nodo R) {
         if (R != null) {
             ImprimirPadres(R.getLI());
-            if (R.TieneLigaIzquierda() || R.TieneLigaDerecha()) {
+            if (!R.EsHoja()) {
                 System.out.print(R.getDato());
             }
             ImprimirPadres(R.getLD());
@@ -103,9 +103,302 @@ public class Arbol {
             if (R.getDato() == dato) {
                 return true;
             }
-            foundLeft = BuscarDato(R.getLI(), dato);
-            foundRigth = BuscarDato(R.getLD(), dato);
+            if (dato > R.getDato()) {
+                foundRigth = BuscarDato(R.getLD(), dato);
+            }
+            else {
+                foundLeft = BuscarDato(R.getLI(), dato);
+            }
         }
         return foundLeft || foundRigth;
+    }
+
+    public void InsertarDato(Nodo R, char dato) {
+        Nodo nuevo = new Nodo(dato);
+        //El siguiente es el insertar del arbol, ya que recibe dos nodos (Sobrecarga/Polimorfismo), no como este que recibe un nodo y un char
+        InsertarDato(R, nuevo);
+    }
+
+    public void MostrarHermano(Nodo R, char dato) {
+        if (R != null && R == Raiz && R.getDato() == dato) {
+            System.out.println("El dato es la raiz, no tiene hermano");
+            return;
+        }
+        if (R != null) {
+            if (R.TieneLigaIzquierda() && R.getLI().getDato() == dato) {
+                System.out.println((R.TieneLigaDerecha() ? "El hermano de " + dato + " es: " + R.getLD().getDato() : "No tiene hermano"));
+            }
+            else if (R.TieneLigaDerecha() && R.getLD().getDato() == dato) {
+                System.out.println((R.TieneLigaIzquierda() ? "El hermano de " + dato + " es: " + R.getLI().getDato() : "No tiene hermano"));
+            }
+            else {
+                MostrarHermano(R.getLI(), dato);
+                MostrarHermano(R.getLD(), dato);
+            }
+        }
+    }
+
+    public boolean MostrarAncentros(Nodo R, char dato) {
+        if (R != null) {
+            if (R.getDato() == dato) {
+                return true;
+            }
+            if (MostrarAncentros(R.getLI(), dato) || MostrarAncentros(R.getLD(), dato)) {
+                System.out.print(R.getDato() + " ");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void MostrarAltura(Nodo R, char dato) {
+        int Altura;
+        if (R != null) {
+            if (R.getDato() == dato) {
+                //Calcula la altura del nodo con el dato especifico
+                Altura = CalcularAlturaNodo(R);
+                System.out.println("La altura del dato es: " + Altura);
+            }
+            else {
+                //Busca el dato
+                MostrarAltura(R.getLI(), dato);
+                MostrarAltura(R.getLD(), dato);
+            }
+        }
+    }
+
+    private int CalcularAlturaNodo(Nodo R) {
+        int altIzq, altDer;
+        if (R != null) {
+            altIzq = CalcularAlturaNodo(R.getLI());
+            altDer = CalcularAlturaNodo(R.getLD());
+            return Math.max(altIzq, altDer) + 1;
+        }
+        return 0;
+    }
+
+    public void MostrarPrimosHermanos(char dato) {
+            if (Raiz.getDato() == dato) {
+                System.out.println("El dato es la raiz, no tiene primos hermanos");
+            }
+            else {
+                int NivelPrimosHermanos = CalcularNivel(Raiz, dato, 1);
+                MostrarDatosPorNivel(Raiz, dato, NivelPrimosHermanos);
+            }
+    }
+
+    private void MostrarDatosPorNivel(Nodo R, char dato, int nivelSolicitado) {
+        if (R != null) {
+            int NivelNodo = CalcularNivel(Raiz, R.getDato(), 1);
+            //Verifica si son hermanos los que siguen del nodo actual, y si alguno de estos contiene al dato buscado
+            if (!((R.TieneLigaIzquierda() && R.getLI().getDato() == dato) || (R.TieneLigaDerecha() && R.getLD().getDato() == dato))) {
+                //Verifica si estan al mismo nivel
+                if (NivelNodo == nivelSolicitado) {
+                    System.out.print(R.getDato() + " ");
+                }
+                //Sigue buscando el dato
+                else {
+                    MostrarDatosPorNivel(R.getLI(), dato, nivelSolicitado);
+                    MostrarDatosPorNivel(R.getLD(), dato, nivelSolicitado);
+                }
+            }
+        }
+    }
+
+    public int CalcularNivel(Nodo R, char dato, int nivel) {
+        if (R != null) {
+            if (R.getDato() == dato) {
+                return nivel;
+            }
+            else {
+                if (R.TieneLigaIzquierda() && BuscarDato(R.getLI(), dato)) {
+                    nivel = CalcularNivel(R.getLI(), dato, nivel + 1);
+                }
+                else if (R.TieneLigaDerecha() && BuscarDato(R.getLD(), dato)) {
+                    nivel = CalcularNivel(R.getLD(), dato, nivel + 1);
+                }
+            }
+        }
+        return nivel;
+    }
+
+    public void EliminarDato(Nodo R, char dato) {
+        if (Raiz.getDato() == dato) {
+            if (Raiz.TieneLigaIzquierda()) {
+                EncontrarSucesorIzquierda(Raiz.getLI(), Raiz);
+            }
+            else if (!Raiz.TieneLigaIzquierda() && Raiz.TieneLigaDerecha()) {
+                EncontrarSucesorDerecha(Raiz.getLD(), Raiz);
+            }
+            else {
+                Raiz = null;
+            }
+        }
+        else if (R != null) {
+            //sigIzq o sigDer es el nodo a eliminar, por eso se busca el sucesor de este
+            Nodo sigIzq = R.getLI(), sigDer = R.getLD();
+            if ((sigIzq != null && sigIzq.getDato() == dato)) {
+                if (sigIzq.EsHoja()) {
+                    R.setLI(null);
+                }
+                else if(sigIzq.TieneLigaIzquierda() && !sigIzq.TieneLigaDerecha()) {
+                    R.setLI(sigIzq.getLI());
+                }
+                else if (!sigIzq.TieneLigaIzquierda() && sigIzq.TieneLigaDerecha()) {
+                    R.setLI(sigIzq.getLD());
+                }
+                else {
+                    if (!sigIzq.TieneLigaIzquierda()) {
+                        //Se busca sucesor por la derecha de este nodo (Aquel que contiene al dato a eliminar)
+                        EncontrarSucesorDerecha(sigIzq.getLD(), sigIzq);
+                    } else {
+                        //Se busca sucesor por la izquierda de este nodo (Aquel que contiene al dato a eliminar)
+                        EncontrarSucesorIzquierda(sigIzq.getLI(), sigIzq);
+                    }
+                }
+            }
+            else if (sigDer != null && sigDer.getDato() == dato) {
+                if (sigDer.EsHoja()) {
+                    R.setLD(null);
+                }
+                else if(sigDer.TieneLigaIzquierda() && !sigDer.TieneLigaDerecha()) {
+                    R.setLD(sigDer.getLI());
+                }
+                else if(!sigDer.TieneLigaIzquierda() && sigDer.TieneLigaDerecha()) {
+                    R.setLD(sigDer.getLD());
+                }
+                else {
+                    if (!sigDer.TieneLigaIzquierda()) {
+                        //Se busca sucesor por la derecha de este nodo (Aquel que contiene al dato a eliminar)
+                        EncontrarSucesorDerecha(sigDer.getLD(), sigDer);
+                    } else {
+                        //Se busca sucesor por la izquierda de este nodo (Aquel que contiene al dato a eliminar)
+                        EncontrarSucesorIzquierda(sigDer.getLI(), sigDer);
+                    }
+                }
+            }
+            //Se sigue buscando el dato
+            else {
+                EliminarDato(R.getLI(), dato);
+                EliminarDato(R.getLD(), dato);
+            }
+        }
+    }
+
+    public void EncontrarSucesorIzquierda(Nodo R, Nodo Padre) {
+        //Dato auxiliar
+        char dato;
+        if (R != null) {
+            if (R.TieneLigaDerecha()) {
+                EncontrarSucesorIzquierda(R.getLD(), Padre);
+            }
+            else {
+                //Se elimina y se busca el nuevo sucesor
+                dato = R.getDato();
+                EliminarDato(Padre, dato);
+                Padre.setDato(dato);
+            }
+        }
+    }
+
+    public void EncontrarSucesorDerecha(Nodo R, Nodo Padre) {
+        //Dato auxiliar
+        char dato;
+        if (R != null) {
+            if (R.TieneLigaIzquierda()) {
+                EncontrarSucesorIzquierda(R.getLI(), Padre);
+            }
+            else {
+                //Se elimina y se busca el nuevo sucesor
+                dato = R.getDato();
+                EliminarDato(Padre, dato);
+                Padre.setDato(dato);
+            }
+        }
+    }
+
+    public void CrearAVL(char[] arbolChar) {
+        Nodo n;
+        int i;
+        for (i = 0; i < arbolChar.length; i++) {
+            n = new Nodo(arbolChar[i]);
+            if (Raiz == null) {
+                Raiz = n;
+            }
+            else {
+                Raiz = InsertarDatoAVL(Raiz, n);
+            }
+        }
+    }
+
+    private Nodo InsertarDatoAVL(Nodo R, Nodo Insert) {
+        if (Insert.getDato() < R.getDato()) {
+            if (R.TieneLigaIzquierda()) {
+                R.setLI(InsertarDatoAVL(R.getLI(), Insert));
+            } else {
+                R.setLI(Insert);
+            }
+        } else {
+            if (R.TieneLigaDerecha()) {
+                R.setLD(InsertarDatoAVL(R.getLD(), Insert));
+            } else {
+                R.setLD(Insert);
+            }
+        }
+        return ValidarFB(R);
+    }
+
+    private Nodo ValidarFB(Nodo p) {
+        int FB = CalcularFB(p);
+        if (FB < -1) {
+            if (CalcularFB(p.getLD()) > 0) {
+                return RotacionDobleIzquierda(p);
+            } else {
+                return RotacionSimpleIzquierda(p);
+            }
+        } else if (FB  > 1) {
+            if (CalcularFB(p.getLI()) < 0) {
+                return RotacionDobleDerecha(p);
+            } else {
+                return RotacionSimpleDerecha(p);
+            }
+        }
+        return p; //Si no se rota, se retorna el mismo nodo
+    }
+
+    private Nodo RotacionDobleDerecha(Nodo y) {
+        y.setLI(RotacionSimpleIzquierda(y.getLI()));
+        return RotacionSimpleDerecha(y);
+    }
+
+    private Nodo RotacionDobleIzquierda(Nodo y) {
+        y.setLD(RotacionSimpleDerecha(y.getLD()));
+        return RotacionSimpleIzquierda(y);
+    }
+
+    private Nodo RotacionSimpleIzquierda(Nodo y) {
+        Nodo x = y.getLD();
+        Nodo T2 = x.getLI();
+        x.setLI(y);
+        y.setLD(T2);
+        return x;
+    }
+
+    private Nodo RotacionSimpleDerecha(Nodo y) {
+        Nodo x = y.getLI();
+        Nodo T2 = x.getLD();
+        x.setLD(y);
+        y.setLI(T2);
+        return x;
+    }
+
+    private int CalcularFB(Nodo R) {
+        int altIzq, altDer;
+        if (R != null) {
+            altIzq = CalcularAlturaNodo(R.getLI());
+            altDer = CalcularAlturaNodo(R.getLD());
+            return altIzq - altDer;
+        }
+        return 0;
     }
 }

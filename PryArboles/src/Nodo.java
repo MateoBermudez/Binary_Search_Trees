@@ -12,7 +12,7 @@ public class Nodo {
     }
 
     public void setDato(char dato) {
-        Dato = dato;
+        this.Dato = dato;
     }
 
     public Nodo getLI() {
@@ -36,5 +36,8 @@ public class Nodo {
     }
     public boolean TieneLigaIzquierda() {
         return this.LI != null;
+    }
+    public boolean EsHoja() {
+        return !TieneLigaDerecha() && !TieneLigaIzquierda();
     }
 }
