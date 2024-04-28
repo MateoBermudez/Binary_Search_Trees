@@ -6,7 +6,7 @@ public class Main {
         boolean salir = false, datoExiste, arbolCreado = false;
         char datoAux;
         char[] arbolChar;
-        String ingresoArbol, ingresoOpcion;
+        String ingresoArbol = "", ingresoOpcion;
         Arbol arbol = new Arbol();
         while (!salir) {
             Menu();
@@ -91,7 +91,7 @@ public class Main {
                     datoAux = Character.toUpperCase(datoAux);
                     datoExiste = arbol.BuscarDato(arbol.Raiz, datoAux);
                     if (datoExiste) {
-                        //Nivel 1 --> El nivel de la raiz es 1
+                        //Nivel 1 --> El nivel de la raiz es 1 siempre
                         System.out.println("Nivel del dato: " + arbol.CalcularNivel(arbol.Raiz, datoAux, 1));
                     } else {
                         System.out.println("Dato no existe, no se puede buscar su nivel");
@@ -135,11 +135,25 @@ public class Main {
                     }
                     break;
                 case "13":
-                    System.out.println("Reemplazando el creado del arbol anterior y balanceandolo de la forma AVL con la cadena de datos ingresada previamente");
-                    //Falta
-                    //Crear arbol AVL (Llamar metodo)
+                    System.out.println("Reemplazando el creado del arbol anterior y balanceandolo de la forma AVL con la cadena de datos ingresada en la opcion 1.");
+                    arbolChar = ingresoArbol.toCharArray();
+                    arbol.Raiz = null;
+                    arbol = new Arbol();
+                    arbol.CrearAVL(arbolChar);
                     break;
                 case "14":
+                    System.out.println("Ingrese un dato a buscar: ");
+                    datoAux = lea.next().charAt(0);
+                    datoAux = ReIngresarInsertarDato(datoAux);
+                    datoAux = Character.toUpperCase(datoAux);
+                    datoExiste = arbol.BuscarDato(arbol.Raiz, datoAux);
+                    if (datoExiste) {
+                        System.out.println("Dato encontrado");
+                    } else {
+                        System.out.println("Dato no encontrado");
+                    }
+                    break;
+                case "15":
                     salir = true;
                     break;
                 default:
@@ -194,7 +208,8 @@ public class Main {
         System.out.println("11. Mostrar los primos hermanos de un dato");
         System.out.println("12. Mostrar los ancestros de un dato");
         System.out.println("13. Crear el arbol y balancearlo de la forma AVL con la cadena de datos ingresada previamente");
-        System.out.println("14. Salir\n");
+        System.out.println("14. Buscar un dato");
+        System.out.println("15. Salir\n");
     }
 
     private static boolean ValidarInputArbol(String input) {

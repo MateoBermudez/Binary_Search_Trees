@@ -103,8 +103,12 @@ public class Arbol {
             if (R.getDato() == dato) {
                 return true;
             }
-            foundLeft = BuscarDato(R.getLI(), dato);
-            foundRigth = BuscarDato(R.getLD(), dato);
+            if (dato > R.getDato()) {
+                foundRigth = BuscarDato(R.getLD(), dato);
+            }
+            else {
+                foundLeft = BuscarDato(R.getLI(), dato);
+            }
         }
         return foundLeft || foundRigth;
     }
@@ -311,5 +315,90 @@ public class Arbol {
                 Padre.setDato(dato);
             }
         }
+    }
+
+    public void CrearAVL(char[] arbolChar) {
+        Nodo n;
+        int i;
+        for (i = 0; i < arbolChar.length; i++) {
+            n = new Nodo(arbolChar[i]);
+            if (Raiz == null) {
+                Raiz = n;
+            }
+            else {
+                Raiz = InsertarDatoAVL(Raiz, n);
+            }
+        }
+    }
+
+    private Nodo InsertarDatoAVL(Nodo R, Nodo Insert) {
+        if (Insert.getDato() < R.getDato()) {
+            if (R.TieneLigaIzquierda()) {
+                R.setLI(InsertarDatoAVL(R.getLI(), Insert));
+            } else {
+                R.setLI(Insert);
+            }
+        } else {
+            if (R.TieneLigaDerecha()) {
+                R.setLD(InsertarDatoAVL(R.getLD(), Insert));
+            } else {
+                R.setLD(Insert);
+            }
+        }
+        return ValidarFB(R);
+    }
+
+    private Nodo ValidarFB(Nodo p) {
+        int FB = CalcularFB(p);
+        if (FB < -1) {
+            if (CalcularFB(p.getLD()) > 0) {
+                return RotacionDobleIzquierda(p);
+            } else {
+                return RotacionSimpleIzquierda(p);
+            }
+        } else if (FB  > 1) {
+            if (CalcularFB(p.getLI()) < 0) {
+                return RotacionDobleDerecha(p);
+            } else {
+                return RotacionSimpleDerecha(p);
+            }
+        }
+        return p; //Si no se rota, se retorna el mismo nodo
+    }
+
+    private Nodo RotacionDobleDerecha(Nodo y) {
+        y.setLI(RotacionSimpleIzquierda(y.getLI()));
+        return RotacionSimpleDerecha(y);
+    }
+
+    private Nodo RotacionDobleIzquierda(Nodo y) {
+        y.setLD(RotacionSimpleDerecha(y.getLD()));
+        return RotacionSimpleIzquierda(y);
+    }
+
+    private Nodo RotacionSimpleIzquierda(Nodo y) {
+        Nodo x = y.getLD();
+        Nodo T2 = x.getLI();
+        x.setLI(y);
+        y.setLD(T2);
+        return x;
+    }
+
+    private Nodo RotacionSimpleDerecha(Nodo y) {
+        Nodo x = y.getLI();
+        Nodo T2 = x.getLD();
+        x.setLD(y);
+        y.setLI(T2);
+        return x;
+    }
+
+    private int CalcularFB(Nodo R) {
+        int altIzq, altDer;
+        if (R != null) {
+            altIzq = CalcularAlturaNodo(R.getLI());
+            altDer = CalcularAlturaNodo(R.getLD());
+            return altIzq - altDer;
+        }
+        return 0;
     }
 }
