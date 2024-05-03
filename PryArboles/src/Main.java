@@ -136,10 +136,9 @@ public class Main {
                     break;
                 case "13":
                     System.out.println("Reemplazando el creado del arbol anterior y balanceandolo de la forma AVL con la cadena de datos ingresada en la opcion 1.");
-                    arbolChar = ingresoArbol.toCharArray();
                     arbol.Raiz = null;
                     arbol = new Arbol();
-                    arbol.CrearAVL(arbolChar);
+                    arbol.CrearArbolAVL(ingresoArbol);
                     break;
                 case "14":
                     System.out.println("Ingrese un dato a buscar: ");
