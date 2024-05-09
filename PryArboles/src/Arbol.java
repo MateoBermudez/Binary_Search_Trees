@@ -183,8 +183,34 @@ public class Arbol {
             }
             else {
                 int NivelPrimosHermanos = CalcularNivel(Raiz, dato, 1);
-                MostrarDatosPorNivel(Raiz, dato, NivelPrimosHermanos);
+                if (NivelPrimosHermanos == 2) {
+                    System.out.println("El dato no tiene primos hermanos");
+                }
+                else {
+                    Nodo abuelo = EncontrarAbuelo(Raiz, dato);
+                    MostrarDatosPorNivel(abuelo, dato, NivelPrimosHermanos);
+                }
+
             }
+    }
+
+    private Nodo EncontrarAbuelo(Nodo R, char dato) {
+        if (R != null) {
+            int aux = CalcularNivel(Raiz, dato, 1) - CalcularNivel(Raiz, R.getDato(), 1);
+            if (aux == 2) {
+                return R;
+            }
+            else {
+                if (R.TieneLigaIzquierda() && BuscarDato(R.getLI(), dato)) {
+                    return EncontrarAbuelo(R.getLI(), dato);
+                }
+                else if (R.TieneLigaDerecha() && BuscarDato(R.getLD(), dato)) {
+                    return EncontrarAbuelo(R.getLD(), dato);
+                }
+
+            }
+        }
+        return null;
     }
 
     private void MostrarDatosPorNivel(Nodo R, char dato, int nivelSolicitado) {
